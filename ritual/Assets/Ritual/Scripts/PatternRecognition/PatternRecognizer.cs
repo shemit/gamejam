@@ -15,6 +15,19 @@ public class PatternRecognizer : MonoBehaviour {
         }
     }
 
+    private static int m_CachedGazeUIMask = 0;
+    public static int GazeUIMask
+    {
+        get
+        {
+            if (m_CachedGazeUIMask == 0)
+            {
+                m_CachedGazeUIMask = LayerMask.GetMask("GazeUI");
+            }
+            return m_CachedGazeUIMask;
+        }
+    }
+
     public Pattern m_ActivePattern;
     public Transform m_HeadTransform;
     public float m_SphereCastRadius = 1.0f;
@@ -44,14 +57,35 @@ public class PatternRecognizer : MonoBehaviour {
 
     public void Update()
     {
-        if(m_ActivePattern.IsComplete)
+        UpdateGazeUI();
+        UpateSequenceRecognition();
+    }
+
+    public void UpdateGazeUI()
+    {
+        RaycastHit hit;
+        Ray headRay = new Ray(m_HeadTransform.position, m_HeadTransform.forward);
+        //if(Physics.Raycast(headRay, out hit, float.MaxValue, PatternMask))
+        if (Physics.SphereCast(headRay, m_SphereCastRadius, out hit, float.MaxValue, GazeUIMask))
+        {
+            BaseGazeUIComponent gazeUI = hit.collider.GetComponent<BaseGazeUIComponent>();
+            if (gazeUI != null)
+            {
+                gazeUI.GazeAt();
+            }
+        }
+    }
+
+    public void UpateSequenceRecognition()
+    {
+        if (m_ActivePattern.IsComplete)
         {
             return;
         }
 
         m_TimeSinceLastAdvancement += Time.deltaTime;
 
-        if(m_TimeSinceLastAdvancement > m_MaxTimeBeforeSequenceAdvancement)
+        if (m_TimeSinceLastAdvancement > m_MaxTimeBeforeSequenceAdvancement)
         {
             m_ActivePattern.ResetSequence();
         }
@@ -59,12 +93,12 @@ public class PatternRecognizer : MonoBehaviour {
         RaycastHit hit;
         Ray headRay = new Ray(m_HeadTransform.position, m_HeadTransform.forward);
         //if(Physics.Raycast(headRay, out hit, float.MaxValue, PatternMask))
-        if(Physics.SphereCast(headRay, m_SphereCastRadius, out hit, float.MaxValue, PatternMask))
+        if (Physics.SphereCast(headRay, m_SphereCastRadius, out hit, float.MaxValue, PatternMask))
         {
-            if(m_ActivePattern != null)
+            if (m_ActivePattern != null)
             {
                 Pattern.SequenceAdvancementResult result = m_ActivePattern.AdvanceSequence(hit.collider);
-                switch(result)
+                switch (result)
                 {
                     case Pattern.SequenceAdvancementResult.NEW_SEQUENCE_STARTED:
                     case Pattern.SequenceAdvancementResult.SEQUENCE_ADVANCED:

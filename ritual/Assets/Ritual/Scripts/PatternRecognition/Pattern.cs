@@ -98,17 +98,17 @@ public class Pattern : MonoBehaviour {
         // update object for feedback
         m_LastHitCollider = m_PatternSequence[m_CurrentSequenceIndex];
         m_SequenceTracker[m_CurrentSequenceIndex]++;
-        SetColor(m_PatternSequence[m_CurrentSequenceIndex].gameObject, Color.green);
+        Utils.SetColor(m_PatternSequence[m_CurrentSequenceIndex].gameObject, Color.green);
 
         // highlight next
-        SetColor(m_PatternSequence[GetNextIndex(m_CurrentSequenceIndex)].gameObject, Color.yellow);
+        Utils.SetColor(m_PatternSequence[GetNextIndex(m_CurrentSequenceIndex)].gameObject, Color.yellow);
     }
 
     public void ResetSequence()
     {
         for(int i = 0, n = m_PatternSequence.Length; i < n; ++i)
         {
-            SetColor(m_PatternSequence[i].gameObject, Color.white);
+            Utils.SetColor(m_PatternSequence[i].gameObject, Color.white);
             m_SequenceTracker[i] = 0;
         }
         m_LastHitCollider = null;
@@ -116,20 +116,13 @@ public class Pattern : MonoBehaviour {
         m_IsComplete = false;
     }
 
-    public void SetColor(GameObject obj, Color c)
-    {
-        Renderer r = obj.GetComponent<Renderer>();
-        if(r != null && r.material != null)
-        {
-            r.material.color = c;
-        }
-    }
+    
 
     public void SetSequenceColor(Color c)
     {
         for (int i = 0, n = m_PatternSequence.Length; i < n; ++i)
         {
-            SetColor(m_PatternSequence[i].gameObject, c);
+            Utils.SetColor(m_PatternSequence[i].gameObject, c);
         }
     }
 }
