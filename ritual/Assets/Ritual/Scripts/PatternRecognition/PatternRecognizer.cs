@@ -20,15 +20,35 @@ public class PatternRecognizer : MonoBehaviour {
     public float m_SphereCastRadius = 1.0f;
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
+    public Pattern[] m_Patterns;
+
     private float m_TimeSinceLastAdvancement = 0;
 
     public void Init(Pattern pattern)
     {
+        if(m_ActivePattern != null)
+        {
+            m_ActivePattern.gameObject.SetActive(false);
+        }
+
         m_ActivePattern = pattern;
+        m_ActivePattern.Init();
+        m_ActivePattern.ResetSequence();
+        m_ActivePattern.gameObject.SetActive(true);
+    }
+
+    public void Start()
+    {
+        Init(m_ActivePattern);
     }
 
     public void Update()
     {
+        if(m_ActivePattern.IsComplete)
+        {
+            return;
+        }
+
         m_TimeSinceLastAdvancement += Time.deltaTime;
 
         if(m_TimeSinceLastAdvancement > m_MaxTimeBeforeSequenceAdvancement)
@@ -51,6 +71,7 @@ public class PatternRecognizer : MonoBehaviour {
                         m_TimeSinceLastAdvancement = 0;
                         break;
                     case Pattern.SequenceAdvancementResult.COMPLETE:
+                        m_TimeSinceLastAdvancement = 0;
                         StartCoroutine(DoWinSequence(1.0f));
                         break;
                     case Pattern.SequenceAdvancementResult.NO_MATCH:
@@ -72,7 +93,13 @@ public class PatternRecognizer : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
 
-        m_ActivePattern.ResetSequence();
+        //m_ActivePattern.ResetSequence();
+        PickRandomPattern();
+    }
+
+    public void PickRandomPattern()
+    {
+        Init(m_Patterns[Random.Range(0, m_Patterns.Length)]);
     }
     
 }

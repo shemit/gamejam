@@ -22,10 +22,10 @@ public class Pattern : MonoBehaviour {
         WRONG_HIT,
     }
 
-    public void Start()
+    public void Init()
     {
         m_SequenceTracker = new int[m_PatternSequence.Length];
-        for(int i = 0, n = m_SequenceTracker.Length; i < n; ++i)
+        for (int i = 0, n = m_SequenceTracker.Length; i < n; ++i)
         {
             m_SequenceTracker[i] = 0;
         }
@@ -113,6 +113,7 @@ public class Pattern : MonoBehaviour {
         }
         m_LastHitCollider = null;
         m_CurrentSequenceIndex = -1;
+        m_IsComplete = false;
     }
 
     public void SetColor(GameObject obj, Color c)
