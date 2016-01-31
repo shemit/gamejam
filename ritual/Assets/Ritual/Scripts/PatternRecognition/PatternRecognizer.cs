@@ -29,7 +29,7 @@ public class PatternRecognizer : MonoBehaviour {
         }
     }
 
-
+    public GameObject m_IndicatorVFXPrefab;
     public Transform m_HeadTransform;
     public Transform m_PatternSpawnPos;
     public float m_SphereCastRadius = 1.0f;
@@ -62,6 +62,7 @@ public class PatternRecognizer : MonoBehaviour {
             GameObject patternObj = Instantiate(patternPrefab, m_PatternSpawnPos.position, m_PatternSpawnPos.rotation) as GameObject;
             patternObj.transform.SetParent(m_PatternSpawnPos);
             m_ActivePattern = patternObj.GetComponent<Pattern>();
+            m_ActivePattern.SetupIndicators(m_IndicatorVFXPrefab);
             m_ActivePattern.Init();
             m_ActivePattern.ResetSequence();
             m_ActivePattern.gameObject.SetActive(true);
@@ -121,6 +122,7 @@ public class PatternRecognizer : MonoBehaviour {
 
         if (m_TimeSinceLastAdvancement > m_MaxTimeBeforeSequenceAdvancement)
         {
+            m_TimeSinceLastAdvancement = 0.0f;
             m_ActivePattern.ResetSequence();
         }
 

@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 1349b5e17ac893c4fa6a52ca246f96c1
-timeCreated: 1454132794
+timeCreated: 1454270715
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_IndicatorVFXPrefab: {fileID: 105044, guid: 11621bcc124b9cb49b58f883d5806c04,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
