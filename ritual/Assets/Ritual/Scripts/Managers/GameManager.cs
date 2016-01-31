@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour {
     public float m_StepPreviewDanceDistanceScaler = 4.0f;
     public float m_TimeBetweenPreviewMove = 0.5f;
     public float m_TimePerPlayerMove = 2.0f;
+    public float m_MinTimeToComplete = 10.0f;
 
     public enum GamePhase
     {
@@ -60,7 +61,7 @@ public class GameManager : MonoBehaviour {
     {
         m_NumTriesLeft = m_MaxTries;
         m_NumDancesCompleted = 0;
-        m_PatternRecognizer.m_AllowSequenceRecognition = true;
+        m_PatternRecognizer.PauseSequenceRecognition();
         m_CurrentPhase = GamePhase.ENTER;
     }
 
@@ -115,6 +116,7 @@ public class GameManager : MonoBehaviour {
     [ContextMenu("Transition to Dance Phase")]
     public void TransitionToDance()
     {
+        m_PatternRecognizer.PauseSequenceRecognition();
         m_Bird.Dance(m_PatternRecognizer.ActivePattern);
         m_CurrentPhase = GamePhase.DANCE;
     }
@@ -124,8 +126,9 @@ public class GameManager : MonoBehaviour {
         if (m_Bird.DanceCompleted)
         {
             m_WaitTimer = 0.0f;
-            m_DanceTimeLimitInSeconds = m_PatternRecognizer.ActivePattern.m_PatternSequence.Length * m_TimePerPlayerMove;
+            m_DanceTimeLimitInSeconds = Mathf.Max(m_MinTimeToComplete, m_PatternRecognizer.ActivePattern.m_PatternSequence.Length * m_TimePerPlayerMove);
             m_PatternRecognizer.ActivePattern.ResetSequence();
+            m_PatternRecognizer.ResumeSequenceRecognition();
             m_CurrentPhase = GamePhase.WAIT;
         }
     }
@@ -141,6 +144,7 @@ public class GameManager : MonoBehaviour {
         m_WaitTimer += Time.deltaTime;
         if (m_WaitTimer > m_DanceTimeLimitInSeconds || Input.GetKeyDown(KeyCode.F))
         {
+            m_PatternRecognizer.PauseSequenceRecognition();
             m_NumTriesLeft--;
             m_HealthIndicator.DeductHP();
             SpawnFeedbackVFX(m_DisappointFeedbackVFX);
@@ -158,12 +162,12 @@ public class GameManager : MonoBehaviour {
         }
         else if (m_PatternRecognizer.ActivePattern.IsComplete || Input.GetKeyDown(KeyCode.C))
         {
+            m_PatternRecognizer.PauseSequenceRecognition();
             m_NumDancesCompleted++;
             for (int i = 0; i < m_NumDancesCompleted; ++i)
             {
                 SpawnFeedbackVFX(m_ApprovalFeedbackVFX);
             }
-
             if (m_NumDancesCompleted >= m_NumDancesToWin)
             {
                 m_Bird.TriggerWinAnimation();

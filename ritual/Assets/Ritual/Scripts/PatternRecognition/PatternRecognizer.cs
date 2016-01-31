@@ -68,6 +68,18 @@ public class PatternRecognizer : MonoBehaviour {
         }
     }
 
+    public void PauseSequenceRecognition()
+    {
+        m_ActivePattern.Hide();
+        m_AllowSequenceRecognition = false;
+    }
+
+    public void ResumeSequenceRecognition()
+    {
+        m_ActivePattern.Show();
+        m_AllowSequenceRecognition = true;
+    }
+
     public void Start()
     {
         Init(m_PatternPrefabs[0]);

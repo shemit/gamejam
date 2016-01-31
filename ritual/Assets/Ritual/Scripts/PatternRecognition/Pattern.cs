@@ -46,6 +46,16 @@ public class Pattern : MonoBehaviour {
         }
     }
 
+    public void Hide()
+    {
+        m_PatternSequence[m_CurrentSequenceIndex].gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        m_PatternSequence[m_CurrentSequenceIndex].gameObject.SetActive(true);
+    }
+
     public SequenceAdvancementResult AdvanceSequence(Collider hitCollider)
     {
         if (hitCollider == m_LastHitCollider)
