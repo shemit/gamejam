@@ -46,13 +46,17 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Ritual\Scripts\Bird.cs" />
+     <Compile Include="Assets\Ritual\Scripts\GazeUI\BaseGazeUIComponent.cs" />
+     <Compile Include="Assets\Ritual\Scripts\GazeUI\QuitGazeUI.cs" />
+     <Compile Include="Assets\Ritual\Scripts\GazeUI\StartGazeUI.cs" />
+     <Compile Include="Assets\Ritual\Scripts\HealthIndicator.cs" />
      <Compile Include="Assets\Ritual\Scripts\Managers\GameManager.cs" />
-     <Compile Include="Assets\Scripts\GazeUI\BaseGazeUIComponent.cs" />
-     <Compile Include="Assets\Scripts\GazeUI\QuitGazeUI.cs" />
-     <Compile Include="Assets\Scripts\Managers\IntroManager.cs" />
-     <Compile Include="Assets\Scripts\PatternRecognition\Pattern.cs" />
-     <Compile Include="Assets\Scripts\PatternRecognition\PatternRecognizer.cs" />
-     <Compile Include="Assets\Scripts\Utils.cs" />
+     <Compile Include="Assets\Ritual\Scripts\Managers\IntroManager.cs" />
+     <Compile Include="Assets\Ritual\Scripts\PatternRecognition\Pattern.cs" />
+     <Compile Include="Assets\Ritual\Scripts\PatternRecognition\PatternRecognizer.cs" />
+     <Compile Include="Assets\Ritual\Scripts\Utils.cs" />
+     <Compile Include="Assets\Ritual\Scripts\VFXController.cs" />
+     <Compile Include="Assets\TestMovement.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />

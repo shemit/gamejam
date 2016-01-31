@@ -36,6 +36,7 @@ public class PatternRecognizer : MonoBehaviour {
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
     public bool m_AutoSelectNextPattern = true;
+    public bool m_AllowSequenceRecognition = true;
 
     public List<GameObject> m_PatternPrefabs;
     protected List<GameObject> m_UsedPatternPrefabs = new List<GameObject>();
@@ -49,6 +50,7 @@ public class PatternRecognizer : MonoBehaviour {
 
     public void Init(GameObject patternPrefab)
     {
+        StopCoroutine("DoWinSequence");
         if(m_ActivePattern != null)
         {
             Destroy(m_ActivePattern.gameObject);
@@ -74,7 +76,10 @@ public class PatternRecognizer : MonoBehaviour {
     public void Update()
     {
         UpdateGazeUI();
-        UpateSequenceRecognition();
+        if (m_AllowSequenceRecognition)
+        {
+            UpateSequenceRecognition();
+        }
     }
 
     public void UpdateGazeUI()
@@ -122,13 +127,16 @@ public class PatternRecognizer : MonoBehaviour {
                         break;
                     case Pattern.SequenceAdvancementResult.COMPLETE:
                         m_TimeSinceLastAdvancement = 0;
-                        StartCoroutine(DoWinSequence(1.0f));
+                        if (m_AutoSelectNextPattern)
+                        {
+                            StartCoroutine(DoWinSequence(1.0f));
+                        }
                         break;
                     case Pattern.SequenceAdvancementResult.NO_MATCH:
                         m_ActivePattern.ResetSequence();
                         break;
                 }
-                Debug.Log(hit.collider.name);
+                //Debug.Log(hit.collider.name);
             }
         }
     }

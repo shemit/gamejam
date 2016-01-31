@@ -11,12 +11,15 @@ public class GameManager : MonoBehaviour {
     public GameObject m_ApprovalFeedbackVFX;
     public GameObject m_DisappointFeedbackVFX;
 
+    public HealthIndicator m_HealthIndicator;
     public int m_MaxTries = 3;
     protected int m_NumTriesLeft = 0;
 
     public int m_NumDancesToWin = 5;
     protected int m_NumDancesCompleted = 0;
 
+    public Transform m_StepPreviousHeadReferencePos;
+    public float m_StepPreviewDanceDistanceScaler = 4.0f;
     public float m_TimeBetweenPreviewMove = 0.5f;
     public float m_TimePerPlayerMove = 2.0f;
 
@@ -37,21 +40,25 @@ public class GameManager : MonoBehaviour {
     protected float m_WaitTimer = 0.0f;
     protected float m_DanceTimeLimitInSeconds = 0.0f;
 
-    protected int m_DanceStepIndex = 0;
-    protected float m_DanceStepTimer = 0.0f;
-
     public void Start()
     {
         if (m_PatternRecognizer == null)
         {
             m_PatternRecognizer = FindObjectOfType<PatternRecognizer>();
         }
+
+        if (m_HealthIndicator == null)
+        {
+            m_HealthIndicator = FindObjectOfType<HealthIndicator>();
+        }
+        m_HealthIndicator.Init(m_MaxTries);
     }
 
     public void StartGame()
     {
         m_NumTriesLeft = m_MaxTries;
         m_NumDancesCompleted = 0;
+        m_PatternRecognizer.m_AllowSequenceRecognition = true;
         m_CurrentPhase = GamePhase.ENTER;
     }
 
@@ -103,32 +110,21 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    [ContextMenu("Transition to Dance Phase")]
     public void TransitionToDance()
     {
-        m_DanceStepIndex = 0;
-        m_DanceStepTimer = 0.0f;
-        // TODO: play first dance step
+        m_Bird.Dance(m_PatternRecognizer.ActivePattern);
         m_CurrentPhase = GamePhase.DANCE;
     }
 
     public void HandleDancePhase()
     {
-        m_DanceStepTimer += Time.deltaTime;
-        if (m_DanceStepTimer >= m_TimeBetweenPreviewMove)
+        if (m_Bird.DanceCompleted)
         {
-            m_DanceStepIndex++;
-            if (m_DanceStepIndex >= m_PatternRecognizer.ActivePattern.m_PatternSequence.Length)
-            {
-                m_PatternRecognizer.ActivePattern.ResetSequence();
-                m_WaitTimer = 0.0f;
-                m_DanceTimeLimitInSeconds = m_PatternRecognizer.ActivePattern.m_PatternSequence.Length * m_TimePerPlayerMove;
-                m_CurrentPhase = GamePhase.WAIT;
-            }
-            else
-            {
-                // TODO: play next dance step
-                m_TimeBetweenPreviewMove = 0.0f;
-            }
+            m_WaitTimer = 0.0f;
+            m_DanceTimeLimitInSeconds = m_PatternRecognizer.ActivePattern.m_PatternSequence.Length * m_TimePerPlayerMove;
+            m_PatternRecognizer.ActivePattern.ResetSequence();
+            m_CurrentPhase = GamePhase.WAIT;
         }
     }
 
@@ -138,6 +134,8 @@ public class GameManager : MonoBehaviour {
         if (m_WaitTimer > m_DanceTimeLimitInSeconds)
         {
             m_NumTriesLeft--;
+            m_HealthIndicator.DeductHP();
+            SpawnFeedbackVFX(m_DisappointFeedbackVFX);
             if (m_NumTriesLeft <= 0)
             {
                 m_CurrentPhase = GamePhase.LOSE;
@@ -150,6 +148,7 @@ public class GameManager : MonoBehaviour {
         else if (m_PatternRecognizer.ActivePattern.IsComplete)
         {
             m_NumDancesCompleted++;
+            SpawnFeedbackVFX(m_ApprovalFeedbackVFX);
             if (m_NumDancesCompleted >= m_NumDancesToWin)
             {
                 m_CurrentPhase = GamePhase.WIN;
