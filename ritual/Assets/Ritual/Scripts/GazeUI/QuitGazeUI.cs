@@ -7,10 +7,12 @@ public class QuitGazeUI : BaseGazeUIComponent {
     {
         base.Activate();
         Debug.Log("quiting");
+#if UNITY_EDITOR
         if (Application.isEditor)
         {
             UnityEditor.EditorApplication.isPlaying = false;
         }
+#endif
         Application.Quit();
     }
 }

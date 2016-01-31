@@ -84,8 +84,8 @@ public class Pattern : MonoBehaviour {
 
     public SequenceAdvancementResult AdvanceSequence(Collider hitCollider)
     {
-        if (hitCollider == m_LastHitCollider)
-            return SequenceAdvancementResult.HIT_LAST_COLLIDER;
+        //if (hitCollider == m_LastHitCollider)
+            //return SequenceAdvancementResult.HIT_LAST_COLLIDER;
 
         SequenceAdvancementResult result = SequenceAdvancementResult.NO_MATCH;
 

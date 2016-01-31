@@ -118,6 +118,7 @@ public class PatternRecognizer : MonoBehaviour {
             return;
         }
 
+        /*
         m_TimeSinceLastAdvancement += Time.deltaTime;
 
         if (m_TimeSinceLastAdvancement > m_MaxTimeBeforeSequenceAdvancement)
@@ -125,6 +126,7 @@ public class PatternRecognizer : MonoBehaviour {
             m_TimeSinceLastAdvancement = 0.0f;
             m_ActivePattern.ResetSequence();
         }
+        */
 
         RaycastHit hit;
         Ray headRay = new Ray(m_HeadTransform.position, m_HeadTransform.forward);
