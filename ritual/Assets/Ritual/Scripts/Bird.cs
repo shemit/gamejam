@@ -54,14 +54,14 @@ public class Bird : MonoBehaviour {
         m_Animator.SetFloat("Y", headAnimBlend.y);
     }
 
-    public void Dance(Pattern p)
+    public void Dance(Pattern p, bool mirror = false)
     {
         m_Pattern = p;
         m_DanceCompleted = false;
-        StartCoroutine(DoDance());
+        StartCoroutine(DoDance(mirror));
     }
 
-    public IEnumerator DoDance()
+    public IEnumerator DoDance(bool mirror = false)
     {
         // find center
         List<Vector2> positions = new List<Vector2>();
@@ -70,6 +70,10 @@ public class Bird : MonoBehaviour {
         for (int i = 0; i < sequenceLength; ++i)
         {
             Vector2 pos = new Vector2(m_Pattern.m_PatternSequence[i].transform.position.x, m_Pattern.m_PatternSequence[i].transform.position.y);
+            if (mirror)
+            {
+                pos.x *= -1;
+            }
             positions.Add(pos);
             center += pos;
         }

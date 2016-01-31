@@ -49,7 +49,7 @@ public class IntroManager : MonoBehaviour {
     [ContextMenu("Start Intro")]
     public void StartIntro()
     {
-        m_PatternRecognizer.Init(null);
+        //m_PatternRecognizer.Init(null);
         m_PatternRecognizer.m_AutoSelectNextPattern = false;
         m_CurrentPhase = IntroPhase.ENTER;
     }
@@ -91,6 +91,8 @@ public class IntroManager : MonoBehaviour {
         bool femaleAtPosition = m_FemaleBird.MoveTo(m_FemaleBirdDancePos.position);
         if (maleAtPosition && femaleAtPosition)
         {
+            m_FemaleBird.m_MaxTurnDegreesPerSecond *= 2;
+            m_MaleBird.m_MaxTurnDegreesPerSecond *= 3;
             m_CurrentPhase = IntroPhase.LOOK_AT;
         }
     }
@@ -101,18 +103,27 @@ public class IntroManager : MonoBehaviour {
         bool femaleCorrectFacing = m_FemaleBird.LookDir(m_FemaleBirdDancePos.forward);
         if (maleCorrectFacing && femaleCorrectFacing)
         {
+            m_FemaleBird.Dance(m_PatternRecognizer.ActivePattern);
             m_CurrentPhase = IntroPhase.FEMALE_DANCE;
         }
     }
 
     public void HandleFemaleDancePhase()
     {
-        m_CurrentPhase = IntroPhase.MALE_DANCE;
+        if (m_FemaleBird.DanceCompleted)
+        {
+            m_MaleBird.Dance(m_PatternRecognizer.ActivePattern, true);
+            m_CurrentPhase = IntroPhase.MALE_DANCE;
+        }
     }
 
     public void HandleMaleDancePhase()
     {
-        m_CurrentPhase = IntroPhase.LOVE;
+        if (m_MaleBird.DanceCompleted)
+        {
+            m_GameManager.SpawnFeedbackVFX(m_GameManager.m_ApprovalFeedbackVFX);
+            m_CurrentPhase = IntroPhase.LOVE;
+        }
     }
 
     public void HandleLovePhase()
