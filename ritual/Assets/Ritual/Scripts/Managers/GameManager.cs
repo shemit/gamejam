@@ -5,6 +5,7 @@ public class GameManager : MonoBehaviour {
     public Bird m_Bird;
     public Transform m_DancePos;
     public Transform m_LosePos;
+    public Transform m_WinPos;
 
     public PatternRecognizer m_PatternRecognizer;
     public Transform m_FeedbackVFXSpawnPos;
@@ -216,8 +217,11 @@ public class GameManager : MonoBehaviour {
     {
         if (!m_Bird.IsPlayingAnimation())
         {
-            // restart
-            Application.LoadLevel(0);
+            if (m_Bird.MoveTo(m_WinPos.position))
+            {
+                // restart
+                Application.LoadLevel(0);
+            }
         }
     }
 
