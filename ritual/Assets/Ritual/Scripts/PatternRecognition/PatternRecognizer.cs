@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PatternRecognizer : MonoBehaviour {
     private static int m_CachedPatternMask = 0;
@@ -33,7 +34,7 @@ public class PatternRecognizer : MonoBehaviour {
     public float m_SphereCastRadius = 1.0f;
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
-    public Pattern[] m_Patterns;
+    public List<Pattern> m_Patterns;
 
     private float m_TimeSinceLastAdvancement = 0;
 
@@ -131,18 +132,23 @@ public class PatternRecognizer : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
         m_ActivePattern.SetSequenceColor(Color.green);
+        yield return new WaitForSeconds(0.5f);
         //m_ActivePattern.ResetSequence();
-        //PickRandomPattern();
+        PickRandomPattern();
     }
 
     public Pattern GetRandomPattern()
     {
-        return m_Patterns[Random.Range(0, m_Patterns.Length)];
+        return m_Patterns[Random.Range(0, m_Patterns.Count)];
     }
 
     public void PickRandomPattern()
     {
-        Init(GetRandomPattern());
+        if (m_Patterns.Count > 0)
+        {
+            m_Patterns.Remove(m_ActivePattern);
+            Init(GetRandomPattern());
+        }
     }
     
 }

@@ -38,28 +38,11 @@ public class Pattern : MonoBehaviour {
 
         SequenceAdvancementResult result = SequenceAdvancementResult.NO_MATCH;
 
-        if (m_CurrentSequenceIndex == -1)
+        // sequence already in progress so check for next in sequence
+        if (hitCollider == m_PatternSequence[m_CurrentSequenceIndex])
         {
-            // sequence hasn't started so use this first hit as the start
-            for (int i = 0, n = m_PatternSequence.Length; i < n; ++i)
-            {
-                if (m_PatternSequence[i] == hitCollider)
-                {
-                    SetCurrentSequenceIndex(i);
-                    result = SequenceAdvancementResult.NEW_SEQUENCE_STARTED;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            // sequence already in progress so check for next in sequence
-            int nextIndex = GetNextIndex(m_CurrentSequenceIndex);
-            if (hitCollider == m_PatternSequence[nextIndex])
-            {
-                SetCurrentSequenceIndex(nextIndex);
-                result = SequenceAdvancementResult.SEQUENCE_ADVANCED;
-            }
+            SetCurrentSequenceIndex(GetNextIndex(m_CurrentSequenceIndex));
+            result = SequenceAdvancementResult.SEQUENCE_ADVANCED;
         }
 
         // check for completion
@@ -93,11 +76,14 @@ public class Pattern : MonoBehaviour {
             return;
         }
 
+        m_PatternSequence[m_CurrentSequenceIndex].gameObject.SetActive(false);
+        m_LastHitCollider = m_PatternSequence[m_CurrentSequenceIndex];
+        m_SequenceTracker[m_CurrentSequenceIndex]++;
+
         m_CurrentSequenceIndex = i;
 
         // update object for feedback
-        m_LastHitCollider = m_PatternSequence[m_CurrentSequenceIndex];
-        m_SequenceTracker[m_CurrentSequenceIndex]++;
+        m_PatternSequence[m_CurrentSequenceIndex].gameObject.SetActive(true);
         Utils.SetColor(m_PatternSequence[m_CurrentSequenceIndex].gameObject, Color.green);
 
         // highlight next
@@ -108,11 +94,14 @@ public class Pattern : MonoBehaviour {
     {
         for(int i = 0, n = m_PatternSequence.Length; i < n; ++i)
         {
+            m_PatternSequence[i].gameObject.SetActive(false);
             Utils.SetColor(m_PatternSequence[i].gameObject, Color.white);
             m_SequenceTracker[i] = 0;
         }
+
+        m_PatternSequence[0].gameObject.SetActive(true);
         m_LastHitCollider = null;
-        m_CurrentSequenceIndex = -1;
+        m_CurrentSequenceIndex = 0;
         m_IsComplete = false;
     }
 
@@ -122,6 +111,7 @@ public class Pattern : MonoBehaviour {
     {
         for (int i = 0, n = m_PatternSequence.Length; i < n; ++i)
         {
+            m_PatternSequence[i].gameObject.SetActive(true);
             Utils.SetColor(m_PatternSequence[i].gameObject, c);
         }
     }
