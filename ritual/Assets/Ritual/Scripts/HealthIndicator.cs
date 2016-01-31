@@ -30,7 +30,12 @@ public class HealthIndicator : MonoBehaviour {
         {
             GameObject obj = m_HealthIndicators[0];
             m_HealthIndicators.Remove(obj);
-            Destroy(obj);
+            //Destroy(obj);
+            obj.AddComponent<BoxCollider>();
+            Rigidbody rb = obj.AddComponent<Rigidbody>();
+            rb.AddTorque(transform.right * 50);
+            rb.AddForce((transform.forward + transform.up) * 200);
+            Destroy(obj, 10.0f);
         }
     }
 }
