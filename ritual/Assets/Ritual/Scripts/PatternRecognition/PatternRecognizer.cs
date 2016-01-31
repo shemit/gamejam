@@ -36,6 +36,7 @@ public class PatternRecognizer : MonoBehaviour {
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
     public bool m_AutoSelectNextPattern = true;
+    public bool m_AllowSequenceRecognition = true;
 
     public List<GameObject> m_PatternPrefabs;
     protected List<GameObject> m_UsedPatternPrefabs = new List<GameObject>();
@@ -75,7 +76,10 @@ public class PatternRecognizer : MonoBehaviour {
     public void Update()
     {
         UpdateGazeUI();
-        UpateSequenceRecognition();
+        if (m_AllowSequenceRecognition)
+        {
+            UpateSequenceRecognition();
+        }
     }
 
     public void UpdateGazeUI()

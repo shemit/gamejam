@@ -48,6 +48,7 @@
      <Compile Include="Assets\Ritual\Scripts\Bird.cs" />
      <Compile Include="Assets\Ritual\Scripts\GazeUI\BaseGazeUIComponent.cs" />
      <Compile Include="Assets\Ritual\Scripts\GazeUI\QuitGazeUI.cs" />
+     <Compile Include="Assets\Ritual\Scripts\GazeUI\StartGazeUI.cs" />
      <Compile Include="Assets\Ritual\Scripts\HealthIndicator.cs" />
      <Compile Include="Assets\Ritual\Scripts\Managers\GameManager.cs" />
      <Compile Include="Assets\Ritual\Scripts\Managers\IntroManager.cs" />

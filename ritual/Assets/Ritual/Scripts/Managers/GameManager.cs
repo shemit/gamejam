@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour {
     {
         m_NumTriesLeft = m_MaxTries;
         m_NumDancesCompleted = 0;
+        m_PatternRecognizer.m_AllowSequenceRecognition = true;
         m_CurrentPhase = GamePhase.ENTER;
     }
 
