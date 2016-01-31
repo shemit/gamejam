@@ -25,3 +25,5 @@ ritual/Assembly-CSharp-Editor.csproj
 ritual/Assembly-CSharp-Editor.csproj
 *.csproj
 ritual/Assembly-CSharp.csproj
+*.csproj
+*.csproj
