@@ -18,7 +18,7 @@ public class BaseGazeUIComponent : MonoBehaviour {
         if (m_WasGazedAt)
         {
             m_GazeTimer += Time.deltaTime;
-            Debug.Log("Gazing: " + m_GazeTimer);
+            //Debug.Log("Gazing: " + m_GazeTimer);
             if (m_GazeTimer >= m_ActivationTime)
             {
                 Activate();

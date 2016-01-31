@@ -120,8 +120,6 @@ public class Pattern : MonoBehaviour {
         m_IsComplete = false;
     }
 
-    
-
     public void SetSequenceColor(Color c)
     {
         for (int i = 0, n = m_PatternSequence.Length; i < n; ++i)

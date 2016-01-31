@@ -49,6 +49,7 @@ public class PatternRecognizer : MonoBehaviour {
 
     public void Init(GameObject patternPrefab)
     {
+        StopCoroutine("DoWinSequence");
         if(m_ActivePattern != null)
         {
             Destroy(m_ActivePattern.gameObject);
@@ -122,13 +123,16 @@ public class PatternRecognizer : MonoBehaviour {
                         break;
                     case Pattern.SequenceAdvancementResult.COMPLETE:
                         m_TimeSinceLastAdvancement = 0;
-                        StartCoroutine(DoWinSequence(1.0f));
+                        if (m_AutoSelectNextPattern)
+                        {
+                            StartCoroutine(DoWinSequence(1.0f));
+                        }
                         break;
                     case Pattern.SequenceAdvancementResult.NO_MATCH:
                         m_ActivePattern.ResetSequence();
                         break;
                 }
-                Debug.Log(hit.collider.name);
+                //Debug.Log(hit.collider.name);
             }
         }
     }
