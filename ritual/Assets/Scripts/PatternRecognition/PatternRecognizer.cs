@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PatternRecognizer : MonoBehaviour {
     private static int m_CachedPatternMask = 0;
@@ -28,31 +29,42 @@ public class PatternRecognizer : MonoBehaviour {
         }
     }
 
-    public Pattern m_ActivePattern;
+
     public Transform m_HeadTransform;
+    public Transform m_PatternSpawnPos;
     public float m_SphereCastRadius = 1.0f;
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
-    public Pattern[] m_Patterns;
+    public List<GameObject> m_PatternPrefabs;
+    protected List<GameObject> m_UsedPatternPrefabs = new List<GameObject>();
+
+    protected Pattern m_ActivePattern;
+    protected GameObject m_LastPatternPrefab;
 
     private float m_TimeSinceLastAdvancement = 0;
 
-    public void Init(Pattern pattern)
+    public void Init(GameObject patternPrefab)
     {
         if(m_ActivePattern != null)
         {
-            m_ActivePattern.gameObject.SetActive(false);
+            Destroy(m_ActivePattern.gameObject);
         }
 
-        m_ActivePattern = pattern;
-        m_ActivePattern.Init();
-        m_ActivePattern.ResetSequence();
-        m_ActivePattern.gameObject.SetActive(true);
+        if (patternPrefab != null)
+        {
+            m_LastPatternPrefab = patternPrefab;
+            GameObject patternObj = Instantiate(patternPrefab, m_PatternSpawnPos.position, m_PatternSpawnPos.rotation) as GameObject;
+            patternObj.transform.SetParent(m_PatternSpawnPos);
+            m_ActivePattern = patternObj.GetComponent<Pattern>();
+            m_ActivePattern.Init();
+            m_ActivePattern.ResetSequence();
+            m_ActivePattern.gameObject.SetActive(true);
+        }
     }
 
     public void Start()
     {
-        Init(m_ActivePattern);
+        Init(m_PatternPrefabs[0]);
     }
 
     public void Update()
@@ -78,7 +90,7 @@ public class PatternRecognizer : MonoBehaviour {
 
     public void UpateSequenceRecognition()
     {
-        if (m_ActivePattern.IsComplete)
+        if (m_ActivePattern == null || m_ActivePattern.IsComplete)
         {
             return;
         }
@@ -126,14 +138,30 @@ public class PatternRecognizer : MonoBehaviour {
             m_ActivePattern.SetSequenceColor(new Color(Random.value + 0.5f, Random.value + 0.5f, Random.value + 0.5f));
             yield return new WaitForEndOfFrame();
         }
-
+        m_ActivePattern.SetSequenceColor(Color.green);
+        yield return new WaitForSeconds(0.5f);
         //m_ActivePattern.ResetSequence();
         PickRandomPattern();
     }
 
+    public GameObject GetRandomPatternPrefab()
+    {
+        return m_PatternPrefabs[Random.Range(0, m_PatternPrefabs.Count)];
+    }
+
     public void PickRandomPattern()
     {
-        Init(m_Patterns[Random.Range(0, m_Patterns.Length)]);
+        m_UsedPatternPrefabs.Add(m_LastPatternPrefab);
+        m_PatternPrefabs.Remove(m_LastPatternPrefab);
+
+        // reload patterns
+        if (m_PatternPrefabs.Count == 0)
+        {
+            m_PatternPrefabs.AddRange(m_UsedPatternPrefabs);
+            m_UsedPatternPrefabs.Clear();
+        }
+
+        Init(GetRandomPatternPrefab());
     }
     
 }
