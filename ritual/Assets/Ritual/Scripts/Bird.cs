@@ -104,7 +104,7 @@ public class Bird : MonoBehaviour {
     {
         // find center
         List<Vector2> positions = new List<Vector2>();
-        Vector2 center = Vector2.zero;
+        Vector2 center = new Vector2(0, 4f); // m_Pattern.transform.position;//
         int sequenceLength = m_Pattern.m_PatternSequence.Length;
         for (int i = 0; i < sequenceLength; ++i)
         {
@@ -114,10 +114,10 @@ public class Bird : MonoBehaviour {
                 pos.x *= -1;
             }
             positions.Add(pos);
-            center += pos;
+            //center += pos;
         }
-        center.x /= sequenceLength;
-        center.y /= sequenceLength;
+        //center.x /= sequenceLength;
+        //center.y /= sequenceLength;
 
         // find furthest point
         float furthest = 0.0f;
@@ -133,44 +133,52 @@ public class Bird : MonoBehaviour {
         int currentStep = 0;
         float stepTimer = 0.0f;
         Vector2 currVec = Vector3.zero;
-        Vector2 desiredVec = positions[0] - center;
-        desiredVec.x /= furthest;
-        desiredVec.y /= furthest;
-
-        // use furthest point to set scaler
-        while (currentStep < sequenceLength)
+        Vector2 desiredVec = Vector3.zero;
+        for (int repeats = 0; repeats < m_Pattern.m_RequiredCompletionCount; ++repeats)
         {
-            float t = Mathf.Clamp01(stepTimer/m_DanceStepTime);
-            HeadPos(Vector2.Lerp(currVec, desiredVec, t)*2);
+            // reset data
+            currentStep = 0;
+            stepTimer = 0.0f;
+            currVec = Vector3.zero;
+            desiredVec = positions[0] - center;
+            desiredVec.x /= furthest;
+            desiredVec.y /= furthest;
 
-            stepTimer += Time.deltaTime;
-            if (stepTimer > m_DanceStepTime)
+            // use furthest point to set scaler
+            while (currentStep < sequenceLength)
             {
-                currentStep++;
-                stepTimer = 0.0f;
-                if (currentStep < sequenceLength)
+                float t = Mathf.Clamp01(stepTimer / m_DanceStepTime);
+                HeadPos(Vector2.Lerp(currVec, desiredVec, t) * 2);
+
+                stepTimer += Time.deltaTime;
+                if (stepTimer > m_DanceStepTime)
                 {
-                    currVec = desiredVec;
-                    desiredVec = positions[currentStep] - center;
-                    desiredVec.x /= furthest;
-                    desiredVec.y /= furthest;
+                    currentStep++;
+                    stepTimer = 0.0f;
+                    if (currentStep < sequenceLength)
+                    {
+                        currVec = desiredVec;
+                        desiredVec = positions[currentStep] - center;
+                        desiredVec.x /= furthest;
+                        desiredVec.y /= furthest;
+                    }
                 }
+                yield return new WaitForEndOfFrame();
             }
-            yield return new WaitForEndOfFrame();
-        }
+            stepTimer = 0.0f;
+            currVec = desiredVec;
+            desiredVec = Vector2.zero;
+            while (stepTimer < m_DanceStepTime)
+            {
+                float t = Mathf.Clamp01(stepTimer / m_DanceStepTime);
+                HeadPos(Vector2.Lerp(currVec, desiredVec, t) * 2);
 
-        stepTimer = 0.0f;
-        currVec = desiredVec;
-        desiredVec = Vector2.zero;
-        while (stepTimer < m_DanceStepTime)
-        {
-            float t = Mathf.Clamp01(stepTimer / m_DanceStepTime);
-            HeadPos(Vector2.Lerp(currVec, desiredVec, t) * 2);
-
-            stepTimer += Time.deltaTime;
-            yield return new WaitForEndOfFrame();
+                stepTimer += Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+            HeadPos(Vector2.zero);
         }
-        HeadPos(Vector2.zero);
+        
         m_DanceCompleted = true;
     }
 }
