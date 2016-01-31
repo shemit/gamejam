@@ -50,6 +50,7 @@ public class IntroManager : MonoBehaviour {
     public void StartIntro()
     {
         m_PatternRecognizer.Init(null);
+        m_PatternRecognizer.m_AutoSelectNextPattern = false;
         m_CurrentPhase = IntroPhase.ENTER;
     }
 

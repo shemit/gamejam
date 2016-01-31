@@ -35,11 +35,15 @@ public class PatternRecognizer : MonoBehaviour {
     public float m_SphereCastRadius = 1.0f;
     public float m_MaxTimeBeforeSequenceAdvancement = 1.0f;
 
+    public bool m_AutoSelectNextPattern = true;
+
     public List<GameObject> m_PatternPrefabs;
     protected List<GameObject> m_UsedPatternPrefabs = new List<GameObject>();
 
     protected Pattern m_ActivePattern;
+    public Pattern ActivePattern { get { return m_ActivePattern; } }
     protected GameObject m_LastPatternPrefab;
+    public GameObject LastPatternPrefab { get { return m_LastPatternPrefab; } }
 
     private float m_TimeSinceLastAdvancement = 0;
 
@@ -139,9 +143,12 @@ public class PatternRecognizer : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
         m_ActivePattern.SetSequenceColor(Color.green);
-        yield return new WaitForSeconds(0.5f);
         //m_ActivePattern.ResetSequence();
-        PickRandomPattern();
+        if (m_AutoSelectNextPattern)
+        {
+            yield return new WaitForSeconds(0.5f);
+            InitRandomPattern();
+        }
     }
 
     public GameObject GetRandomPatternPrefab()
@@ -149,10 +156,13 @@ public class PatternRecognizer : MonoBehaviour {
         return m_PatternPrefabs[Random.Range(0, m_PatternPrefabs.Count)];
     }
 
-    public void PickRandomPattern()
+    public void InitRandomPattern()
     {
-        m_UsedPatternPrefabs.Add(m_LastPatternPrefab);
-        m_PatternPrefabs.Remove(m_LastPatternPrefab);
+        if (m_LastPatternPrefab != null)
+        {
+            m_UsedPatternPrefabs.Add(m_LastPatternPrefab);
+            m_PatternPrefabs.Remove(m_LastPatternPrefab);
+        }
 
         // reload patterns
         if (m_PatternPrefabs.Count == 0)
