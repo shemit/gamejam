@@ -2,6 +2,9 @@
 using System.Collections;
 
 public class Bird : MonoBehaviour {
+    public const float k_MoveToArrivalThreshold = 0.15f;
+    public const float k_LookDirDotProductThreshold = 0.99f;
+
     public float m_Speed = 5.0f;
     public float m_MaxTurnDegreesPerSecond = 10.0f;
 
@@ -10,7 +13,7 @@ public class Bird : MonoBehaviour {
         Vector3 dir = pos - transform.position;
         dir.y = 0.0f;
         float dist = dir.magnitude;
-        if (dist < 1.0f)
+        if (dist < k_MoveToArrivalThreshold)
         {
             return true; // return true if we're within threshold
         }
@@ -25,6 +28,12 @@ public class Bird : MonoBehaviour {
         Quaternion desiredLookRotation = Quaternion.LookRotation(dir, Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredLookRotation, m_MaxTurnDegreesPerSecond * Time.deltaTime);
 
-        return Vector3.Dot(dir, transform.forward) > 0.9f; // if dot product is greater than .9 then we're facing close enough to the desired dir
+        if (Vector3.Dot(dir, transform.forward) > k_LookDirDotProductThreshold)
+        {
+            transform.rotation = desiredLookRotation;
+            return true;
+        }
+        return false; // if dot product is greater than .9 then we're facing close enough to the desired dir
     }
+
 }

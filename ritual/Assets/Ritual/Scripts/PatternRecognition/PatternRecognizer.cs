@@ -45,9 +45,13 @@ public class PatternRecognizer : MonoBehaviour {
         }
 
         m_ActivePattern = pattern;
-        m_ActivePattern.Init();
-        m_ActivePattern.ResetSequence();
-        m_ActivePattern.gameObject.SetActive(true);
+
+        if (m_ActivePattern != null)
+        {
+            m_ActivePattern.Init();
+            m_ActivePattern.ResetSequence();
+            m_ActivePattern.gameObject.SetActive(true);
+        }
     }
 
     public void Start()
@@ -78,7 +82,7 @@ public class PatternRecognizer : MonoBehaviour {
 
     public void UpateSequenceRecognition()
     {
-        if (m_ActivePattern.IsComplete)
+        if (m_ActivePattern == null || m_ActivePattern.IsComplete)
         {
             return;
         }
@@ -126,14 +130,19 @@ public class PatternRecognizer : MonoBehaviour {
             m_ActivePattern.SetSequenceColor(new Color(Random.value + 0.5f, Random.value + 0.5f, Random.value + 0.5f));
             yield return new WaitForEndOfFrame();
         }
-
+        m_ActivePattern.SetSequenceColor(Color.green);
         //m_ActivePattern.ResetSequence();
-        PickRandomPattern();
+        //PickRandomPattern();
+    }
+
+    public Pattern GetRandomPattern()
+    {
+        return m_Patterns[Random.Range(0, m_Patterns.Length)];
     }
 
     public void PickRandomPattern()
     {
-        Init(m_Patterns[Random.Range(0, m_Patterns.Length)]);
+        Init(GetRandomPattern());
     }
     
 }
