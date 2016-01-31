@@ -68,8 +68,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Ritual\Scripts\PatternRecognition\Pattern.cs" />
-    <Compile Include="Assets\Ritual\Scripts\PatternRecognition\PatternRecognizer.cs" />
+    <Compile Include="Assets\Scripts\GazeUI\BaseGazeUIComponent.cs" />
+    <Compile Include="Assets\Scripts\GazeUI\QuitGazeUI.cs" />
+    <Compile Include="Assets\Scripts\Managers\IntroManager.cs" />
+    <Compile Include="Assets\Scripts\PatternRecognition\Pattern.cs" />
+    <Compile Include="Assets\Scripts\PatternRecognition\PatternRecognizer.cs" />
+    <Compile Include="Assets\Scripts\Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
