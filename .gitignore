@@ -10,4 +10,8 @@ ritual/[Bb]uild/
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
 
+*.sln
+*.suo
+*.tmp
+
 .DS_Store
