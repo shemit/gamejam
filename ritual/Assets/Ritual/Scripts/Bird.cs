@@ -141,7 +141,7 @@ public class Bird : MonoBehaviour {
         while (currentStep < sequenceLength)
         {
             float t = Mathf.Clamp01(stepTimer/m_DanceStepTime);
-            HeadPos(Vector2.Lerp(currVec, desiredVec, t));
+            HeadPos(Vector2.Lerp(currVec, desiredVec, t)*2);
 
             stepTimer += Time.deltaTime;
             if (stepTimer > m_DanceStepTime)
@@ -165,7 +165,7 @@ public class Bird : MonoBehaviour {
         while (stepTimer < m_DanceStepTime)
         {
             float t = Mathf.Clamp01(stepTimer / m_DanceStepTime);
-            HeadPos(Vector2.Lerp(currVec, desiredVec, t));
+            HeadPos(Vector2.Lerp(currVec, desiredVec, t) * 2);
 
             stepTimer += Time.deltaTime;
             yield return new WaitForEndOfFrame();

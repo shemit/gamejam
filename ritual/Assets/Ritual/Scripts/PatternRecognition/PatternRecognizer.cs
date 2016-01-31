@@ -164,6 +164,24 @@ public class PatternRecognizer : MonoBehaviour {
         return m_PatternPrefabs[Random.Range(0, m_PatternPrefabs.Count)];
     }
 
+    public void InitNextPattern()
+    {
+        if (m_LastPatternPrefab != null)
+        {
+            m_UsedPatternPrefabs.Add(m_LastPatternPrefab);
+            m_PatternPrefabs.Remove(m_LastPatternPrefab);
+        }
+
+        // reload patterns
+        if (m_PatternPrefabs.Count == 0)
+        {
+            m_PatternPrefabs.AddRange(m_UsedPatternPrefabs);
+            m_UsedPatternPrefabs.Clear();
+        }
+
+        Init(m_PatternPrefabs[0]);
+    }
+
     public void InitRandomPattern()
     {
         if (m_LastPatternPrefab != null)

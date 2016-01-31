@@ -4,6 +4,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour {
     public Bird m_Bird;
     public Transform m_DancePos;
+    public Transform m_LosePos;
 
     public PatternRecognizer m_PatternRecognizer;
     public Transform m_FeedbackVFXSpawnPos;
@@ -15,7 +16,7 @@ public class GameManager : MonoBehaviour {
     public int m_MaxTries = 3;
     protected int m_NumTriesLeft = 0;
 
-    public int m_NumDancesToWin = 5;
+    protected int m_NumDancesToWin = 0;
     protected int m_NumDancesCompleted = 0;
 
     public Transform m_StepPreviousHeadReferencePos;
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour {
         {
             m_PatternRecognizer = FindObjectOfType<PatternRecognizer>();
         }
+        m_NumDancesToWin = m_PatternRecognizer.m_PatternPrefabs.Count;
 
         if (m_HealthIndicator == null)
         {
@@ -130,31 +132,46 @@ public class GameManager : MonoBehaviour {
 
     public void HandleWaitPhase()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            TransitionToDance();
+            return;
+        }
+
         m_WaitTimer += Time.deltaTime;
-        if (m_WaitTimer > m_DanceTimeLimitInSeconds)
+        if (m_WaitTimer > m_DanceTimeLimitInSeconds || Input.GetKeyDown(KeyCode.F))
         {
             m_NumTriesLeft--;
             m_HealthIndicator.DeductHP();
             SpawnFeedbackVFX(m_DisappointFeedbackVFX);
             if (m_NumTriesLeft <= 0)
             {
+                m_Bird.TriggerLoseAnimation();
+                m_Bird.m_MaxTurnDegreesPerSecond *= 3;
                 m_CurrentPhase = GamePhase.LOSE;
             }
             else
             {
+                m_Bird.TriggerDisappointAnimation();
                 m_CurrentPhase = GamePhase.DISAPPOINT;
             }
         }
-        else if (m_PatternRecognizer.ActivePattern.IsComplete)
+        else if (m_PatternRecognizer.ActivePattern.IsComplete || Input.GetKeyDown(KeyCode.C))
         {
             m_NumDancesCompleted++;
-            SpawnFeedbackVFX(m_ApprovalFeedbackVFX);
+            for (int i = 0; i < m_NumDancesCompleted; ++i)
+            {
+                SpawnFeedbackVFX(m_ApprovalFeedbackVFX);
+            }
+
             if (m_NumDancesCompleted >= m_NumDancesToWin)
             {
+                m_Bird.TriggerWinAnimation();
                 m_CurrentPhase = GamePhase.WIN;
             }
             else
             {
+                m_Bird.TriggerApproveAnimation();
                 m_CurrentPhase = GamePhase.APPROVE;
             }
         }
@@ -162,26 +179,42 @@ public class GameManager : MonoBehaviour {
 
     public void HandleDisappointPhase()
     {
-        
-        m_PatternRecognizer.ActivePattern.ResetSequence();
-        TransitionToDance();
+        if (!m_Bird.IsPlayingAnimation())
+        {
+            m_PatternRecognizer.ActivePattern.ResetSequence();
+            TransitionToDance();
+        }
     }
 
     public void HandleApprovePhase()
     {
-        
-        m_PatternRecognizer.InitRandomPattern();
-        TransitionToDance();
+        if (!m_Bird.IsPlayingAnimation())
+        {
+            //m_PatternRecognizer.InitRandomPattern();
+            m_PatternRecognizer.InitNextPattern();
+            TransitionToDance();
+        }
     }
 
     public void HandleLosePhase()
     {
-
+        if (!m_Bird.IsPlayingAnimation())
+        {
+            if (m_Bird.MoveTo(m_LosePos.position))
+            {
+                // restart
+                Application.LoadLevel(0);
+            }
+        }
     }
 
     public void HandleWinPhase()
     {
-
+        if (!m_Bird.IsPlayingAnimation())
+        {
+            // restart
+            Application.LoadLevel(0);
+        }
     }
 
     public void SpawnFeedbackVFX(GameObject prefab)
