@@ -22,6 +22,21 @@ public class Pattern : MonoBehaviour {
         WRONG_HIT,
     }
 
+    public void OnDrawGizmos()
+    {
+        if (m_PatternSequence != null && m_PatternSequence.Length > 0)
+        {
+            for (int i = 0, n = m_PatternSequence.Length-1; i < n; ++i)
+            {
+                if (m_PatternSequence[i] != null && m_PatternSequence[i + 1] != null)
+                {
+                    Gizmos.color = i == 0?Color.green:Color.red;
+                    Gizmos.DrawLine(m_PatternSequence[i].transform.position, m_PatternSequence[i + 1].transform.position);
+                }
+            }
+        }
+    }
+
     public void Init()
     {
         m_SequenceTracker = new int[m_PatternSequence.Length];
