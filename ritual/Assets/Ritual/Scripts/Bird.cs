@@ -35,4 +35,12 @@ public class Bird : MonoBehaviour {
         }
         return false; // if dot product is greater than .9 then we're facing close enough to the desired dir
     }
+
+    public void HeadPos(Vector2 headAnimBlend) // X coordinate being viewer's right (1) and left (-1), Y being up (1) and down (-1) 
+    {
+        Animator animator = GetComponentInChildren<Animator>();
+
+        animator.SetFloat("X", headAnimBlend.x);
+        animator.SetFloat("Y", headAnimBlend.y);
+    }
 }
