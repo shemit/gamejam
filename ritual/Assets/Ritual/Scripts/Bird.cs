@@ -14,7 +14,7 @@ public class Bird : MonoBehaviour {
     protected Pattern m_Pattern;
     protected bool m_DanceCompleted;
     public bool DanceCompleted { get { return m_DanceCompleted; } }
-
+    protected string m_PlayedAnimationName;
     public void Start()
     {
         m_Animator = GetComponentInChildren<Animator>();
@@ -22,6 +22,7 @@ public class Bird : MonoBehaviour {
 
     public bool MoveTo(Vector3 pos)
     {
+        m_Animator.SetBool("Walking", true);
         Vector3 dir = pos - transform.position;
         dir.y = 0.0f;
         float dist = dir.magnitude;
@@ -35,8 +36,14 @@ public class Bird : MonoBehaviour {
         return false;
     }
 
+    public void StopWalking()
+    {
+        m_Animator.SetBool("Walking", false);
+    }
+
     public bool LookDir(Vector3 dir)
     {
+        m_Animator.SetBool("Walking", true);
         Quaternion desiredLookRotation = Quaternion.LookRotation(dir, Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, desiredLookRotation, m_MaxTurnDegreesPerSecond * Time.deltaTime);
 
@@ -50,8 +57,40 @@ public class Bird : MonoBehaviour {
 
     public void HeadPos(Vector2 headAnimBlend) // X coordinate being viewer's right (1) and left (-1), Y being up (1) and down (-1) 
     {
+        StopWalking();
         m_Animator.SetFloat("X", headAnimBlend.x);
         m_Animator.SetFloat("Y", headAnimBlend.y);
+    }
+
+    public void TriggerDisappointAnimation()
+    {
+        TriggerAnimation("Disappoint");
+    }
+
+    public void TriggerApproveAnimation()
+    {
+        TriggerAnimation("Approve");
+    }
+
+    public void TriggerLoseAnimation()
+    {
+        TriggerAnimation("Lose");
+    }
+
+    public void TriggerWinAnimation()
+    {
+        TriggerAnimation("Win");
+    }
+
+    public void TriggerAnimation(string name)
+    {
+        m_PlayedAnimationName = name;
+        m_Animator.SetTrigger(name);
+    }
+
+    public bool IsPlayingAnimation()
+    {
+        return m_Animator.IsInTransition(0) || m_Animator.GetCurrentAnimatorStateInfo(0).IsName(m_PlayedAnimationName);
     }
 
     public void Dance(Pattern p, bool mirror = false)

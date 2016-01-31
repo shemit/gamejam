@@ -103,6 +103,9 @@ public class IntroManager : MonoBehaviour {
         bool femaleCorrectFacing = m_FemaleBird.LookDir(m_FemaleBirdDancePos.forward);
         if (maleCorrectFacing && femaleCorrectFacing)
         {
+            m_FemaleBird.StopWalking();
+            m_MaleBird.StopWalking();
+
             m_FemaleBird.Dance(m_PatternRecognizer.ActivePattern);
             m_CurrentPhase = IntroPhase.FEMALE_DANCE;
         }
@@ -122,13 +125,18 @@ public class IntroManager : MonoBehaviour {
         if (m_MaleBird.DanceCompleted)
         {
             m_GameManager.SpawnFeedbackVFX(m_GameManager.m_ApprovalFeedbackVFX);
+            m_FemaleBird.TriggerApproveAnimation();
+            m_MaleBird.TriggerApproveAnimation();
             m_CurrentPhase = IntroPhase.LOVE;
         }
     }
 
     public void HandleLovePhase()
     {
-        m_CurrentPhase = IntroPhase.LEAVE;
+        if (!m_FemaleBird.IsPlayingAnimation() && !m_MaleBird.IsPlayingAnimation())
+        {
+            m_CurrentPhase = IntroPhase.LEAVE;
+        }
     }
 
     public void HandleLeavePhase()
