@@ -6,11 +6,14 @@ public class Pattern : MonoBehaviour {
     public Collider[] m_PatternSequence;
 
     private int[] m_SequenceTracker;
+    private GameObject[] m_Indicators;
 
     private int m_CurrentSequenceIndex = -1;
     private bool m_IsComplete;
     public bool IsComplete { get { return m_IsComplete; } }
     private Collider m_LastHitCollider = null;
+
+    public bool m_IndicatorsAreSetup = false;
 
     public enum SequenceAdvancementResult
     {
@@ -35,6 +38,29 @@ public class Pattern : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void SetupIndicators(GameObject indicatorPrefab)
+    {
+        if (m_IndicatorsAreSetup)
+        {
+            return;
+        }
+
+        m_Indicators = new GameObject[m_PatternSequence.Length];
+        for (int i = 0, n = m_PatternSequence.Length; i < n; ++i)
+        {
+            Renderer[] renderers = m_PatternSequence[i].GetComponentsInChildren<Renderer>();
+            foreach (var r in renderers)
+            {
+                Destroy(r);//.enabled = false;
+            }
+
+            Transform trans = m_PatternSequence[i].transform;
+            GameObject indicatorObj = Instantiate(indicatorPrefab, trans.position, trans.rotation) as GameObject;
+            indicatorObj.transform.SetParent(trans);
+        }
+        m_IndicatorsAreSetup = true;
     }
 
     public void Init()
