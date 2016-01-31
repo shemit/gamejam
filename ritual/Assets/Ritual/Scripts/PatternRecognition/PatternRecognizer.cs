@@ -83,6 +83,7 @@ public class PatternRecognizer : MonoBehaviour {
     public void Start()
     {
         Init(m_PatternPrefabs[0]);
+        PauseSequenceRecognition();
     }
 
     public void Update()
