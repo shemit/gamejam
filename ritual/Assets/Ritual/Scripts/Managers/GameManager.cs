@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour {
 
     public HealthIndicator m_HealthIndicator;
     public int m_MaxTries = 3;
+	public float m_LoseResetWaitTime = 5.0f;
+	public float m_WinResetWaitTime = 20.0f;
     protected int m_NumTriesLeft = 0;
 
     protected int m_NumDancesToWin = 0;
@@ -25,6 +27,11 @@ public class GameManager : MonoBehaviour {
     public float m_TimeBetweenPreviewMove = 0.5f;
     public float m_TimePerPlayerMove = 2.0f;
     public float m_MinTimeToComplete = 10.0f;
+
+	/* Rose's Audio stuff */
+	public AudioClip m_gameMusic;
+	private AudioSource m_musicSource;
+
 
     public enum GamePhase
     {
@@ -41,7 +48,8 @@ public class GameManager : MonoBehaviour {
     protected GamePhase m_CurrentPhase = GamePhase.NOT_STARTED;
 
     protected float m_WaitTimer = 0.0f;
-    protected float m_DanceTimeLimitInSeconds = 0.0f;
+	protected float m_DanceTimeLimitInSeconds = 0.0f;
+	protected float m_RestartWaitTimer = 0.0f;
 
     public void Start()
     {
@@ -56,6 +64,9 @@ public class GameManager : MonoBehaviour {
             m_HealthIndicator = FindObjectOfType<HealthIndicator>();
         }
         m_HealthIndicator.Init(m_MaxTries);
+
+		m_musicSource = GetComponent<AudioSource> ();
+
     }
 
     public void StartGame()
@@ -151,8 +162,10 @@ public class GameManager : MonoBehaviour {
             SpawnFeedbackVFX(m_DisappointFeedbackVFX);
             if (m_NumTriesLeft <= 0)
             {
-                m_Bird.TriggerLoseAnimation();
+				m_Bird.TriggerLoseAnimation();
+				m_RestartWaitTimer = m_LoseResetWaitTime;
                 m_Bird.m_MaxTurnDegreesPerSecond *= 3;
+				m_musicSource.volume = 0;
                 m_CurrentPhase = GamePhase.LOSE;
             }
             else
@@ -172,6 +185,8 @@ public class GameManager : MonoBehaviour {
             if (m_NumDancesCompleted >= m_NumDancesToWin)
             {
                 m_Bird.TriggerWinAnimation();
+				m_RestartWaitTimer = m_WinResetWaitTime;
+				m_musicSource.volume = 0;
                 m_CurrentPhase = GamePhase.WIN;
             }
             else
@@ -207,8 +222,12 @@ public class GameManager : MonoBehaviour {
         {
             if (m_Bird.MoveTo(m_LosePos.position))
             {
-                // restart
-                Application.LoadLevel(0);
+				m_RestartWaitTimer -= Time.deltaTime;
+				if (m_RestartWaitTimer <= 0.0f) 
+				{
+					// restart
+					Application.LoadLevel (0);
+				}
             }
         }
     }
@@ -217,11 +236,15 @@ public class GameManager : MonoBehaviour {
     {
         if (!m_Bird.IsPlayingAnimation())
         {
-            if (m_Bird.MoveTo(m_WinPos.position))
-            {
-                // restart
-                Application.LoadLevel(0);
-            }
+			if (m_Bird.MoveTo (m_WinPos.position)) 
+			{
+				m_RestartWaitTimer -= Time.deltaTime;
+				if (m_RestartWaitTimer <= 0.0f) 
+				{
+					// restart
+					Application.LoadLevel (0);
+				}
+			}
         }
     }
 

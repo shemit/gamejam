@@ -15,9 +15,20 @@ public class Bird : MonoBehaviour {
     protected bool m_DanceCompleted;
     public bool DanceCompleted { get { return m_DanceCompleted; } }
     protected string m_PlayedAnimationName;
+
+	/* Rose's audio stuff */
+	public AudioClip m_successDance;
+	public AudioClip m_failDance;
+	public AudioClip m_wedding;
+	public AudioClip m_lose;
+
+	private AudioSource m_SFXsource;
+
     public void Start()
     {
         m_Animator = GetComponentInChildren<Animator>();
+		m_SFXsource = FindObjectOfType<AudioSource> ();
+		m_SFXsource.ignoreListenerVolume = true;
     }
 
     public bool MoveTo(Vector3 pos)
@@ -65,21 +76,25 @@ public class Bird : MonoBehaviour {
     public void TriggerDisappointAnimation()
     {
         TriggerAnimation("Disappoint");
+		m_SFXsource.PlayOneShot(m_failDance, 1.0f);
     }
 
     public void TriggerApproveAnimation()
     {
         TriggerAnimation("Approve");
+		m_SFXsource.PlayOneShot(m_successDance, 1.0f);
     }
 
     public void TriggerLoseAnimation()
     {
         TriggerAnimation("Lose");
+		m_SFXsource.PlayOneShot(m_lose, 1.0f);
     }
 
     public void TriggerWinAnimation()
     {
         TriggerAnimation("Win");
+		m_SFXsource.PlayOneShot(m_wedding, 1.0f);
     }
 
     public void TriggerAnimation(string name)

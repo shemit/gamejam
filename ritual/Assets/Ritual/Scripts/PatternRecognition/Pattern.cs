@@ -145,6 +145,10 @@ public class Pattern : MonoBehaviour {
     {
         for(int i = 0, n = m_PatternSequence.Length; i < n; ++i)
         {
+			if (m_PatternSequence [i] == null) 
+			{
+				continue;
+			}
             m_PatternSequence[i].gameObject.SetActive(false);
             Utils.SetColor(m_PatternSequence[i].gameObject, Color.white);
             m_SequenceTracker[i] = 0;
